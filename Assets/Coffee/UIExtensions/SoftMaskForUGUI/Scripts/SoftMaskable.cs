@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using MaskIntr = UnityEngine.SpriteMaskInteraction;
+using UnityEngine.Serialization;
 
 namespace Coffee.UIExtensions
 {
@@ -10,21 +12,32 @@ namespace Coffee.UIExtensions
 	/// Soft maskable.
 	/// Add this component to Graphic under SoftMask for smooth masking.
 	/// </summary>
+#if UNITY_2018_3_OR_NEWER
+	[ExecuteAlways]
+#else
 	[ExecuteInEditMode]
-	public class SoftMaskable : MonoBehaviour, IMaterialModifier, ICanvasRaycastFilter
+# endif
+	public class SoftMaskable : MonoBehaviour, IMaterialModifier, ICanvasRaycastFilter, ISerializationCallbackReceiver
 	{
 		//################################
 		// Constant or Static Members.
 		//################################
-		static List<SoftMaskable> s_ActiveSoftMaskables;
-		static Material defaultMaterial = null;
+		const int kVisibleInside = (1 << 0) + (1 << 2) + (1 << 4) + (1 << 6);
+		const int kVisibleOutside = (2 << 0) + (2 << 2) + (2 << 4) + (2 << 6);
 
 
 		//################################
 		// Serialize Members.
 		//################################
 		[Tooltip("The graphic will be visible only in areas where no mask is present.")]
+		[System.Obsolete]
+		[HideInInspector]
 		[SerializeField] bool m_Inverse = false;
+		[Tooltip("The interaction for each masks.")]
+		[HideInInspector]
+		[SerializeField] int m_MaskInteraction = kVisibleInside;
+		[Tooltip("Use stencil for masking.")]
+		[SerializeField] bool m_UseStencil = false;
 
 
 		//################################
@@ -62,17 +75,13 @@ namespace Coffee.UIExtensions
 				result = new Material(baseMaterial);
 				result.hideFlags = HideFlags.HideAndDontSave;
 				result.SetTexture(s_SoftMaskTexId, _softMask.softMaskBuffer);
-
-				if (m_Inverse)
-				{
-					result.SetFloat(s_SoftMaskInverseId, 1);
-					result.SetInt(s_StencilCompId, (int)CompareFunction.Always);
-				}
-				else
-				{
-					result.SetFloat(s_SoftMaskInverseId, 0);
-					result.SetInt(s_StencilCompId, (int)CompareFunction.Equal);
-				}
+				result.SetInt(s_StencilCompId, m_UseStencil ? (int)CompareFunction.Equal : (int)CompareFunction.Always);
+				result.SetVector(s_MaskInteractionId, new Vector4(
+						(m_MaskInteraction & 0x3),
+						((m_MaskInteraction >> 2) & 0x3),
+						((m_MaskInteraction >> 4) & 0x3),
+						((m_MaskInteraction >> 6) & 0x3)
+					));
 
 				StencilMaterial.Remove(baseMaterial);
 				ReleaseMaterial(ref _maskMaterial);
@@ -103,22 +112,33 @@ namespace Coffee.UIExtensions
 				return true;
 		
 			if (!RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, sp, eventCamera))
+			{
 				return false;
+			}
 
-			return _softMask.IsRaycastLocationValid(sp, eventCamera, graphic) != m_Inverse;
+			var sm = _softMask;
+			for (int i = 0; i < 4; i++)
+			{
+				s_Interactions[i] = sm ? ((m_MaskInteraction >> i * 2) & 0x3) : 0;
+				sm = sm ? sm.parent : null;
+			}
+
+			return _softMask.IsRaycastLocationValid(sp, eventCamera, graphic, s_Interactions);
 		}
+
 
 		/// <summary>
 		/// The graphic will be visible only in areas where no mask is present.
 		/// </summary>
 		public bool inverse
 		{
-			get { return m_Inverse; }
+			get { return m_MaskInteraction == kVisibleOutside; }
 			set
 			{
-				if (m_Inverse != value)
+				int intValue = value ? kVisibleOutside : kVisibleInside;
+				if (m_MaskInteraction != intValue)
 				{
-					m_Inverse = value;
+					m_MaskInteraction = intValue;
 					graphic.SetMaterialDirty();
 				}
 			}
@@ -129,6 +149,25 @@ namespace Coffee.UIExtensions
 		/// </summary>
 		public Graphic graphic{ get { return _graphic ? _graphic : _graphic = GetComponent<Graphic>(); } }
 
+		/// <summary>
+		/// Set the interaction for each mask.
+		/// </summary>
+		public void SetMaskInteraction(SpriteMaskInteraction intr)
+		{
+			SetMaskInteraction(intr, intr, intr, intr);
+		}
+
+		/// <summary>
+		/// Set the interaction for each mask.
+		/// </summary>
+		public void SetMaskInteraction(SpriteMaskInteraction layer0, SpriteMaskInteraction layer1, SpriteMaskInteraction layer2, SpriteMaskInteraction layer3)
+		{
+			m_MaskInteraction = (int)layer0 + ((int)layer1 << 2) + ((int)layer2 << 4) + ((int)layer3 << 6);
+			if (graphic)
+			{
+				graphic.SetMaterialDirty();
+			}
+		}
 
 		//################################
 		// Private Members.
@@ -138,7 +177,12 @@ namespace Coffee.UIExtensions
 		Material _maskMaterial = null;
 		static int s_SoftMaskTexId;
 		static int s_StencilCompId;
-		static int s_SoftMaskInverseId;
+		static int s_MaskInteractionId;
+		static int s_GameVPId;
+		static int s_GameTVPId;
+		static List<SoftMaskable> s_ActiveSoftMaskables;
+		static int[] s_Interactions = new int[4];
+		static Material s_DefaultMaterial;
 
 		#if UNITY_EDITOR
 		/// <summary>
@@ -146,26 +190,31 @@ namespace Coffee.UIExtensions
 		/// </summary>
 		static void UpdateSceneViewMatrixForShader()
 		{
-			UnityEditor.SceneView sceneView = UnityEditor.SceneView.lastActiveSceneView;
-			if (!sceneView || !sceneView.camera)
-			{
-				return;
-			}
-
-			Camera cam = sceneView.camera;
-			Matrix4x4 w2c = cam.worldToCameraMatrix;
-			Matrix4x4 prj = cam.projectionMatrix;
 		
+			s_ActiveSoftMaskables.RemoveAll(x=>!x);
 			foreach (var sm in s_ActiveSoftMaskables)
 			{
-				if(sm)
+				if (!sm || !sm._maskMaterial || !sm.graphic || !sm.graphic.canvas)
 				{
-					Material mat = sm._maskMaterial;
-					if (mat)
-					{
-						mat.SetMatrix ("_SceneView", w2c);
-						mat.SetMatrix ("_SceneProj", prj);
-					}
+					continue;
+				}
+
+				Material mat = sm._maskMaterial;
+				var c = sm.graphic.canvas.rootCanvas;
+				var wcam = c.worldCamera ?? Camera.main;
+				if (c.renderMode != RenderMode.ScreenSpaceOverlay && wcam)
+				{
+					var pv = GL.GetGPUProjectionMatrix (wcam.projectionMatrix, false) * wcam.worldToCameraMatrix;
+					mat.SetMatrix(s_GameVPId, pv);
+					mat.SetMatrix(s_GameTVPId, pv);
+				}
+				else
+				{
+					var scale = c.transform.localScale.x;
+					var size = (c.transform as RectTransform).sizeDelta;
+					var pos = c.transform.position;
+					mat.SetMatrix(s_GameVPId, Matrix4x4.TRS(new Vector3(0, 0, 0.5f), Quaternion.identity, new Vector3(2 / size.x, 2 / size.y, 0.0005f * scale)));
+					mat.SetMatrix(s_GameTVPId, Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(1 / pos.x, 1 / pos.y, -2/2000f)) * Matrix4x4.Translate(-pos));
 				}
 			}
 		}
@@ -194,11 +243,13 @@ namespace Coffee.UIExtensions
 
 				#if UNITY_EDITOR
 				UnityEditor.EditorApplication.update += UpdateSceneViewMatrixForShader;
+				s_GameVPId = Shader.PropertyToID("_GameVP");
+				s_GameTVPId = Shader.PropertyToID("_GameTVP");
 				#endif
 
 				s_SoftMaskTexId = Shader.PropertyToID("_SoftMaskTex");
 				s_StencilCompId = Shader.PropertyToID("_StencilComp");
-				s_SoftMaskInverseId = Shader.PropertyToID("_SoftMaskInverse");
+				s_MaskInteractionId = Shader.PropertyToID("_MaskInteraction");
 			}
 			s_ActiveSoftMaskables.Add(this);
 
@@ -208,7 +259,7 @@ namespace Coffee.UIExtensions
 			{
 				if (!g.material || g.material == Graphic.defaultGraphicMaterial)
 				{
-					g.material = defaultMaterial ?? (defaultMaterial = new Material (Resources.Load<Shader> ("UI-Default-SoftMask")) { hideFlags = HideFlags.HideAndDontSave, });
+					g.material = s_DefaultMaterial ?? (s_DefaultMaterial = new Material(Resources.Load<Shader>("UI-Default-SoftMask")) { hideFlags = HideFlags.HideAndDontSave, });
 				}
 				g.SetMaterialDirty();
 			}
@@ -225,7 +276,7 @@ namespace Coffee.UIExtensions
 			var g = graphic;
 			if (g)
 			{
-				if (g.material == defaultMaterial)
+				if (g.material == s_DefaultMaterial)
 				{
 					g.material = null;
 				}
@@ -257,6 +308,22 @@ namespace Coffee.UIExtensions
 				}
 				mat = null;
 			}
+		}
+
+
+		void ISerializationCallbackReceiver.OnBeforeSerialize()
+		{
+		}
+
+		void ISerializationCallbackReceiver.OnAfterDeserialize()
+		{
+			#pragma warning disable 0612
+			if (m_Inverse)
+			{
+				m_Inverse = false;
+				m_MaskInteraction = (2 << 0) + (2 << 2) + (2 << 4) + (2 << 6);
+			}
+			#pragma warning restore 0612
 		}
 	}
 }

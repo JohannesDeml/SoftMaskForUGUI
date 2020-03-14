@@ -110,6 +110,7 @@ SubShader {
 
 	Pass {
 		CGPROGRAM
+		#pragma exclude_renderers d3d9
 		#pragma target 3.0
 		#pragma vertex VertShader
 		#pragma fragment PixShader
@@ -126,7 +127,7 @@ SubShader {
 		#include "Assets/TextMesh Pro/Resources/Shaders/TMPro_Properties.cginc"
 		#include "Assets/TextMesh Pro/Resources/Shaders/TMPro.cginc"
             
-        #include "Assets/Coffee/UIExtensions/SoftMaskForUGUI/SoftMask.cginc"
+        #include "./../SoftMask.cginc"
         #pragma shader_feature __ SOFTMASK_EDITOR
 
 		struct vertex_t {
@@ -151,6 +152,7 @@ SubShader {
 			fixed4	underlayColor	: COLOR1;
 		#endif
 			float4 textures			: TEXCOORD5;
+			SOFTMASK_EDITOR_ONLY(float4 worldPosition : TEXCOORD6;)
 		};
 
 		// Used by Unity internally to handle Texture Tiling and Offset.
@@ -220,6 +222,7 @@ SubShader {
 				underlayColor,
 			#endif
 				float4(faceUV, outlineUV),
+				SOFTMASK_EDITOR_ONLY(input.position)
 			};
 
 			return output;
@@ -292,7 +295,7 @@ SubShader {
 			faceColor *= m.x * m.y;
 		#endif
         
-        faceColor *= SoftMask(input.position);
+        faceColor *= SoftMask(input.position, input.worldPosition);
         
 		#if UNITY_UI_ALPHACLIP
 			clip(faceColor.a - 0.001);

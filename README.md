@@ -7,14 +7,18 @@ Soft masking for uGUI elements in Unity.
 
 [![](https://img.shields.io/github/release/mob-sakai/SoftMaskForUGUI.svg?label=latest%20version)](https://github.com/mob-sakai/SoftMaskForUGUI/releases)
 [![](https://img.shields.io/github/release-date/mob-sakai/SoftMaskForUGUI.svg)](https://github.com/mob-sakai/SoftMaskForUGUI/releases)
-![](https://img.shields.io/badge/unity-2017%2B-green.svg)
-[![](https://img.shields.io/github/license/mob-sakai/SoftMaskForUGUI.svg)](https://github.com/mob-sakai/SoftMaskForUGUI/blob/master/LICENSE.txt)
+![](https://img.shields.io/badge/unity-2017%20or%20later-green.svg)
+[![](https://img.shields.io/github/license/mob-sakai/SoftMaskForUGUI.svg)](https://github.com/mob-sakai/SoftMaskForUGUI/blob/upm/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](http://makeapullrequest.com)
+[![](https://img.shields.io/twitter/follow/mob_sakai.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=mob_sakai)
 
 << [Description](#Description) | [WebGL Demo](#demo) | [Download](https://github.com/mob-sakai/SoftMaskForUGUI/releases) | [Usage](#usage) | [Development Note](#development-note) >>
 
 ### What's new? [See changelog ![](https://img.shields.io/github/release-date/mob-sakai/SoftMaskForUGUI.svg?label=last%20updated)](https://github.com/mob-sakai/SoftMaskForUGUI/blob/develop/CHANGELOG.md)
 ### Do you want to receive notifications for new releases? [Watch this repo ![](https://img.shields.io/github/watchers/mob-sakai/SoftMaskForUGUI.svg?style=social&label=Watch)](https://github.com/mob-sakai/SoftMaskForUGUI/subscription)
+### Support me on Patreon!  
+[![become_a_patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/join/2343451?)
+
 
 
 
@@ -55,16 +59,17 @@ By using SoftMask instead of default Mask, rounded edges of UI elements can be e
 ![](https://user-images.githubusercontent.com/12690315/50284151-7459e080-049b-11e9-9cd3-24fb476766dc.png)
 * Support TextMeshPro.  
 ![](https://user-images.githubusercontent.com/12690315/50284145-71f78680-049b-11e9-8be1-ac0ccbdf0144.png)
+* Make multiple holes on one background by 'Parts of parent' option.  
+![](https://user-images.githubusercontent.com/12690315/54102470-f5c26e80-440b-11e9-89d1-899aa4dca00d.png)
+* Camera movement affects the mask rendering when on a World Space Canvas.  
+![](https://user-images.githubusercontent.com/12690315/57015752-68540b80-6c51-11e9-8511-2d4534dd9d58.gif)
 
-#### Known issues
-
-* SceneView does not display SoftMask properly. It is displayed like Mask. ([By design](#why-is-not-it-displayed-properly-in-sceneview))
 
 #### Components
 
 |Component|Description|Screenshot|
 |-|-|-|
-|SoftMask|Use instead of Mask for smooth masking.<br><br>**Show Mask Graphic:** Show the graphic that is associated with the Mask render area.<br>**Desampling Rate:** The desampling rate for soft mask buffer. The larger the value, the better the performance but the lower the quality.<br>**Softness:** The value used by the soft mask to select the area of influence defined over the soft mask's graphic.<br>**Ignore Parent:** Should the soft mask ignore parent soft masks?|<img src="https://user-images.githubusercontent.com/12690315/50319746-377a0200-050c-11e9-96ae-a3a0ec81765f.png" width="600px">|
+|SoftMask|Use instead of Mask for smooth masking.<br><br>**Show Mask Graphic:** Show the graphic that is associated with the Mask render area.<br>**Desampling Rate:** The desampling rate for soft mask buffer. The larger the value, the better the performance but the lower the quality.<br>**Softness:** The value used by the soft mask to select the area of influence defined over the soft mask's graphic.<br>**Ignore Parent:** Should the soft mask ignore parent soft masks?<br>**Part Of Parent:** Is the soft mask a part of parent soft mask?|<img src="https://user-images.githubusercontent.com/12690315/50319746-377a0200-050c-11e9-96ae-a3a0ec81765f.png" width="600px">|
 |SoftMaskable|Add this component to Graphic under SoftMask for smooth masking.<br><br>**Inverse:** The graphic will be visible only in areas where no mask is present.|<img src="https://user-images.githubusercontent.com/12690315/50319747-39dc5c00-050c-11e9-85fa-dd6ea9065daf.png" width="600px">|
 
 
@@ -77,25 +82,62 @@ By using SoftMask instead of default Mask, rounded edges of UI elements can be e
 
 
 <br><br><br><br>
+## Install
+
+#### Using UnityPackageManager (for Unity 2018.3 or later)
+
+Find the manifest.json file in the Packages folder of your project and edit it to look like this:
+```js
+{
+  "dependencies": {
+    "com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git",
+    ...
+  },
+}
+```
+To update the package, change prefix `#{version}` to the target version.
+
+* `"com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git#0.9.2",`
+
+Or, use [UpmGitExtension](https://github.com/mob-sakai/UpmGitExtension).
+
+#### Using .unitypackage file (for Unity 2017.1 or later)
+
+Download `*.unitypackage` from [Releases](https://github.com/mob-sakai/SoftMaskForUGUI/releases) and import the package into your Unity project.  
+Select `Assets > Import Package > Custom Package` from the menu.  
+![](https://user-images.githubusercontent.com/12690315/46570979-edbb5a00-c9a7-11e8-845d-c5ee279effec.png)
+
+
+
+<br><br><br><br>
+## How to play demo
+
+* Import `SoftMask_Demo.unitypackage` into your project.  
+* The unitypackage exists in `Assets/Assets/Coffee/UIExtensions/SoftMaskForUGUI` or `Packages/Soft Mask For uGUI`.  
+![](https://user-images.githubusercontent.com/12690315/51080546-ff3b9d00-1720-11e9-8a58-9e22003714af.png)
+* Open SoftMask_Demo scene and play it.
+* The demo requires `TextMeshPro` and `TextMeshPro Essential Resources`. Import it before playing.
+
+
+
+<br><br><br><br>
 ## Usage
 
-1. Download `*.unitypackage` from [Releases](https://github.com/mob-sakai/SoftMaskForUGUI/releases).
-2. Import the package into your Unity project. Select `Import Package > Custom Package` from the `Assets` menu.  
-![](https://user-images.githubusercontent.com/12690315/46570979-edbb5a00-c9a7-11e8-845d-c5ee279effec.png)
-3. Add SoftMask component instead of Mask component. Or, convert existing Mask component to SoftMask component from the context menu.  
+1. Add SoftMask component instead of Mask component.  
+Or, convert existing Mask component to SoftMask component from the context menu.  
 ![](https://user-images.githubusercontent.com/12690315/48659018-902e2900-ea8e-11e8-9b6e-224365cdde7f.png)
-4. Add SoftMaskable components to the child UI elements of SoftMask component.  
+2. Add SoftMaskable components to the child UI elements of SoftMask component.  
 ![](https://user-images.githubusercontent.com/12690315/48704424-d4a9f800-ec39-11e8-8d65-8b7d1975750c.png)  
 Or, add SoftMaskable components from the inspector of SoftMask component.  
 ![](https://user-images.githubusercontent.com/12690315/50284153-76bc3a80-049b-11e9-8c55-719af897960a.png)
-5. Adjust softness of SoftMask.  
+3. Adjust softness of SoftMask.  
 ![](https://user-images.githubusercontent.com/12690315/48661087-01ca9f00-eab0-11e8-8878-772a1ed1fb7b.gif)
-6. Enjoy!
+4. Enjoy!
 
 
 ##### Requirement
 
-* Unity 2017+ *(including Unity 2018.x)* 
+* Unity 2017 or later *(including Unity 2018.x)* 
 * No other SDK are required
 
 
@@ -107,30 +149,20 @@ Or, add SoftMaskable components from the inspector of SoftMask component.
 
 You can support soft masks in your custom shaders, by adding just 3 lines!
 
-1. Add `#pragma` and `#include`.  `SOFTMASK_EDITOR` is a keyword for editor, not included in the build.
+1. Add `#pragma` and `#include`.  `SOFTMASK_EDITOR` is a keyword for editor only, not included in the build.  
+If you installed using packageManager, include `Packages/com.coffee.softmask-for-ugui/SoftMask.cginc` instead of.
 ```
 #include "Assets/Coffee/UIExtensions/SoftMaskForUGUI/SoftMask.cginc"
 #pragma shader_feature __ SOFTMASK_EDITOR
 ```
-2. Apply a soft mask in the fragment shader. `IN.vertex` is clip position.
+2. Apply a soft mask in the fragment shader.
+  - `IN.vertex` is clip position
+  - `IN.worldPosition` is world position
 ```
-color.a *= SoftMask(IN.vertex);
+color.a *= SoftMask(IN.vertex, IN.worldPosition);
 ```
 
-As an example of implementation, please see [UI-Default-SoftMask.shader](https://raw.githubusercontent.com/mob-sakai/SoftMaskForUGUI/master/Assets/Coffee/UIExtensions/SoftMaskForUGUI/Resources/UI-Default-SoftMask.shader).
-
-
-<br><br>
-#### Why is not it displayed properly in SceneView?
-
-SoftMask calculates the final alpha value based on the value of each channel of the soft mask buffer.
-The soft mask buffer is a buffer generated based on GameView's screen space.
-
-Since SceneView has a view matrix and a projection matrix independent of GameView, the SceneView's camera can not refer to the soft mask buffer properly.
-
-Therefore, in GameView, it is displayed properly. but in ScreenView, it is displayed like default Mask.
-
-![](https://user-images.githubusercontent.com/12690315/48704647-80ebde80-ec3a-11e8-8b2a-99095af85442.png)
+As an example of implementation, please see [UI-Default-SoftMask.shader](https://raw.githubusercontent.com/mob-sakai/SoftMaskForUGUI/upm/Shaders/Resources/UI-Default-SoftMask.shader).
 
 
 <br><br>
@@ -213,7 +245,7 @@ static void ConvertToMask(MenuCommand command)
 }
 ```
 
-For details, please see [SoftMaskEditor.cs](https://raw.githubusercontent.com/mob-sakai/SoftMaskForUGUI/master/Assets/Coffee/UIExtensions/SoftMaskForUGUI/Scripts/Editor/SoftMaskEditor.cs).
+For details, please see [SoftMaskEditor.cs](https://raw.githubusercontent.com/mob-sakai/SoftMaskForUGUI/upm/Scripts/Editor/SoftMaskEditor.cs).
 
 
 <br><br>
@@ -288,6 +320,9 @@ UnityEditor.EditorApplication.update += ()
 ## Author
 
 [mob-sakai](https://github.com/mob-sakai)
+[![](https://img.shields.io/twitter/follow/mob_sakai.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=mob_sakai)  
+[![become_a_patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/join/2343451?)
+
 
 
 
@@ -297,4 +332,4 @@ UnityEditor.EditorApplication.update += ()
 * Releases : https://github.com/mob-sakai/SoftMaskForUGUI/releases
 * Issue tracker : https://github.com/mob-sakai/SoftMaskForUGUI/issues
 * Current project : https://github.com/mob-sakai/SoftMaskForUGUI/projects/1
-* Change log : https://github.com/mob-sakai/SoftMaskForUGUI/blob/master/CHANGELOG.md
+* Change log : https://github.com/mob-sakai/SoftMaskForUGUI/blob/upm/CHANGELOG.md

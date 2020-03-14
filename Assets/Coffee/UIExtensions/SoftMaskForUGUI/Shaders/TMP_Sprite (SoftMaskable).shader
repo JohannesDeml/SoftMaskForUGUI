@@ -56,7 +56,7 @@ Shader "TextMeshPro/Sprite (SoftMaskable)"
 			#pragma multi_compile __ UNITY_UI_CLIP_RECT
 			#pragma multi_compile __ UNITY_UI_ALPHACLIP
             
-            #include "Assets/Coffee/UIExtensions/SoftMaskForUGUI/SoftMask.cginc"
+            #include "./../SoftMask.cginc"
             #pragma shader_feature __ SOFTMASK_EDITOR
 			
 			struct appdata_t
@@ -104,7 +104,7 @@ Shader "TextMeshPro/Sprite (SoftMaskable)"
 					color.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
 				#endif
                 
-                color.a *= SoftMask(IN.vertex);
+                color.a *= SoftMask(IN.vertex, IN.worldPosition);
                 
 				#ifdef UNITY_UI_ALPHACLIP
 					clip (color.a - 0.001);

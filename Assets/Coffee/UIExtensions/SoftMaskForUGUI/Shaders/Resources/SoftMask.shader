@@ -4,8 +4,9 @@ SubShader {
 	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 	LOD 100
 	
+    Cull Off
 	ZWrite Off
-	Blend SrcAlpha OneMinusSrcAlpha 
+	Blend SrcAlpha One
 	ColorMask [_ColorMask]
 
 	Pass {  
@@ -18,10 +19,11 @@ SubShader {
 
 			sampler2D _MainTex;
 			float _Softness;
+			float _Alpha;
 
 			fixed4 frag (v2f_img i) : SV_Target
 			{
-				return saturate(tex2D(_MainTex, i.uv).a/_Softness);
+				return saturate(tex2D(_MainTex, i.uv).a/_Softness) * _Alpha;
 			}
 		ENDCG
 	}

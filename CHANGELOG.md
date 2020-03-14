@@ -1,5 +1,129 @@
 # Changelog
 
+## [v0.9.1](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.9.1) (2020-01-28)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.9.0...v0.9.1)
+
+**Implemented enhancements:**
+
+- Add the parameter to control mask transparency [\#62](https://github.com/mob-sakai/SoftMaskForUGUI/pull/62) ([IIzzaya](https://github.com/IIzzaya))
+
+**Fixed bugs:**
+
+- Projection Matrix check always true when using world space canvas [\#67](https://github.com/mob-sakai/SoftMaskForUGUI/issues/67)
+- Update softmask not working when canvas component was deactivated [\#66](https://github.com/mob-sakai/SoftMaskForUGUI/issues/66)
+- Raycast coordinates are incorrect [\#52](https://github.com/mob-sakai/SoftMaskForUGUI/issues/52)
+
+## [v0.9.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.9.0) (2019-08-27)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.8.1...v0.9.0)
+
+**Implemented enhancements:**
+
+- Improved work in prefab view [\#55](https://github.com/mob-sakai/SoftMaskForUGUI/pull/55) ([ManeFunction](https://github.com/ManeFunction))
+
+**Fixed bugs:**
+
+- Prefab Mode in Play Mode is not supported [\#60](https://github.com/mob-sakai/SoftMaskForUGUI/issues/60)
+- Missing .meta file [\#59](https://github.com/mob-sakai/SoftMaskForUGUI/issues/59)
+
+## [v0.8.1](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.8.1) (2019-05-07)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.8.0...v0.8.1)
+
+**Fixed bugs:**
+
+- Unity 2018.x compile failed [\#51](https://github.com/mob-sakai/SoftMaskForUGUI/issues/51)
+
+## [v0.8.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.8.0) (2019-05-01)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.7.2...v0.8.0)
+
+Camera movement affects the mask rendering when on a World Space Canvas.  
+![](https://user-images.githubusercontent.com/12690315/57015752-68540b80-6c51-11e9-8511-2d4534dd9d58.gif)
+
+**Fixed bugs:**
+
+- In overlay mode, mask will be incorrect if the root canvas's parent position are not zero [\#47](https://github.com/mob-sakai/SoftMaskForUGUI/issues/47)
+
+## [v0.7.2](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.7.2) (2019-03-16)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.7.1...v0.7.2)
+
+**Fixed bugs:**
+
+- The masked images all disappear if game view is maximized [\#44](https://github.com/mob-sakai/SoftMaskForUGUI/issues/44)
+-  Pixels out of range may be read by raycaster [\#43](https://github.com/mob-sakai/SoftMaskForUGUI/issues/43)
+- The masked images all disappear when the game view is resized [\#42](https://github.com/mob-sakai/SoftMaskForUGUI/issues/42)
+- Doesn't work with Screen-Space Overlay [\#41](https://github.com/mob-sakai/SoftMaskForUGUI/issues/41)
+
+## [v0.7.1](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.7.1) (2019-03-11)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.7.0...v0.7.1)
+
+**Fixed bugs:**
+
+- if canvas camera is not set in world space mode, masked contents are not displayed [\#36](https://github.com/mob-sakai/SoftMaskForUGUI/issues/36)
+
+## [v0.7.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.7.0) (2019-03-11)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.6.0...v0.7.0)
+
+Add 'part of parent' option to make multiple holes on one background  
+![](https://user-images.githubusercontent.com/12690315/54102470-f5c26e80-440b-11e9-89d1-899aa4dca00d.png)
+
+**Implemented enhancements:**
+
+- 'Parts of parent' option [\#29](https://github.com/mob-sakai/SoftMaskForUGUI/issues/29)
+
+**Fixed bugs:**
+
+- scene view flickering [\#38](https://github.com/mob-sakai/SoftMaskForUGUI/issues/38)
+- Flipped soft mask texture on Windows [\#37](https://github.com/mob-sakai/SoftMaskForUGUI/issues/37)
+
+## [v0.6.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.6.0) (2019-02-07)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.5.0...v0.6.0)
+
+![](https://user-images.githubusercontent.com/12690315/52258046-e2ca0380-2960-11e9-8cdb-46ee4a5f880f.png)  
+Scene view bugs have been fixed.
+
+
+**Fixed bugs:**
+
+- Shaders for TMPro have compile errors [\#33](https://github.com/mob-sakai/SoftMaskForUGUI/issues/33)
+- SoftMask does not display properly at the edge of the canvas [\#32](https://github.com/mob-sakai/SoftMaskForUGUI/issues/32)
+
+**Closed issues:**
+
+- Shaders for TMPro are no longer support d3d9 & d3d11\_9x [\#34](https://github.com/mob-sakai/SoftMaskForUGUI/issues/34)
+
+## [v0.5.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.5.0) (2019-02-01)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.4.0...v0.5.0)
+
+**Implemented enhancements:**
+
+- Mask interaction for each layer [\#31](https://github.com/mob-sakai/SoftMaskForUGUI/issues/31)
+
+**Fixed bugs:**
+
+- SoftMask is not clipped by RectMask2D [\#30](https://github.com/mob-sakai/SoftMaskForUGUI/issues/30)
+- Does not work with flipped/rotated images [\#27](https://github.com/mob-sakai/SoftMaskForUGUI/issues/27)
+- SceneView does not display SoftMask properly [\#16](https://github.com/mob-sakai/SoftMaskForUGUI/issues/16)
+
+## [v0.4.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.4.0) (2019-01-13)
+
+[Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/0.4.0...v0.4.0)
+
+**Implemented enhancements:**
+
+- Integrate with UnityPackageManager [\#22](https://github.com/mob-sakai/SoftMaskForUGUI/issues/22)
+
+**Fixed bugs:**
+
+- Flipped soft mask texture [\#25](https://github.com/mob-sakai/SoftMaskForUGUI/issues/25)
+
 ## [v0.3.0](https://github.com/mob-sakai/SoftMaskForUGUI/tree/v0.3.0) (2019-01-07)
 
 [Full Changelog](https://github.com/mob-sakai/SoftMaskForUGUI/compare/v0.2.0...v0.3.0)
@@ -48,4 +172,4 @@
 
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
